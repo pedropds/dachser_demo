@@ -4,6 +4,7 @@ import com.dachser.demo.dto.GetShipmentsFilter;
 import com.dachser.demo.dto.GetShipmentsRequest;
 import com.dachser.demo.dto.ShipmentDTO;
 import com.dachser.demo.mapper.ShipmentMapper;
+import lombok.NonNull;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -21,7 +22,7 @@ public class ShipmentRepository {
         this.mapper = mapper;
     }
 
-    public List<ShipmentDTO> findAllShipments(GetShipmentsRequest request) {
+    public List<ShipmentDTO> findAllShipments(@NonNull GetShipmentsRequest request) {
         StringBuilder sql = new StringBuilder("""
                     SELECT s.id,
                         s.tracking_number,
@@ -48,7 +49,7 @@ public class ShipmentRepository {
         return jdbcTemplate.query(sql.toString(), parameters, mapper);
     }
 
-    public Integer countShipments(GetShipmentsRequest request) {
+    public Integer countShipments(@NonNull GetShipmentsRequest request) {
         StringBuilder sql = new StringBuilder("""
                     SELECT COUNT(*)
                     FROM shipments s
@@ -64,7 +65,7 @@ public class ShipmentRepository {
 
     private void appendFilters(StringBuilder sql,
                                MapSqlParameterSource parameters,
-                               GetShipmentsRequest request) {
+                               @NonNull GetShipmentsRequest request) {
         GetShipmentsFilter filter = request.filter();
 
         if (filter.customerId() != null) {
@@ -78,7 +79,7 @@ public class ShipmentRepository {
         }
 
         // Very basic search functionality for now, just to exemplify
-        // In a real-world scenario, using postgres, we could use vector search or \
+        // In a real-world scenario, using Postgres, we could use vector search or
         // full-text search for better performance and flexibility
         if (filter.search() != null && !filter.search().isEmpty()) {
             sql.append("""

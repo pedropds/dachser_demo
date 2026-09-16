@@ -3,6 +3,7 @@ package com.dachser.demo.controller;
 import com.dachser.demo.dto.GetShipmentsRequest;
 import com.dachser.demo.dto.GetShipmentsResponse;
 import com.dachser.demo.service.ShipmentService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,8 @@ public class ShipmentController {
     }
 
     @GetMapping
-    public GetShipmentsResponse getShipments(@ModelAttribute GetShipmentsRequest request) {
-        return shipmentService.getShipments(request);
+    public ResponseEntity<GetShipmentsResponse> getShipments(@ModelAttribute GetShipmentsRequest request) {
+        GetShipmentsResponse response = shipmentService.getShipments(request);
+        return ResponseEntity.ok(response);
     }
 }
