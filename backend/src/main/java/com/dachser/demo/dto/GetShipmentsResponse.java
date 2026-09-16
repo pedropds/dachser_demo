@@ -9,5 +9,5 @@ import java.util.List;
 @Builder
 public class GetShipmentsResponse {
     private List<ShipmentDTO> data;
-    // private PaginationMeta meta;
+    private PaginationMetadata paginationMetadata;
 }

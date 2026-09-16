@@ -48,6 +48,20 @@ public class ShipmentRepository {
         return jdbcTemplate.query(sql.toString(), parameters, mapper);
     }
 
+    public Integer countShipments(GetShipmentsRequest request) {
+        StringBuilder sql = new StringBuilder("""
+                    SELECT COUNT(*)
+                    FROM shipments s
+                    JOIN customers c ON s.customer_id = c.id
+                    WHERE 1=1
+                """);
+
+        MapSqlParameterSource parameters = new MapSqlParameterSource();
+        appendFilters(sql, parameters, request);
+
+        return jdbcTemplate.queryForObject(sql.toString(), parameters, Integer.class);
+    }
+
     private void appendFilters(StringBuilder sql,
                                MapSqlParameterSource parameters,
                                GetShipmentsRequest request) {
@@ -64,6 +78,8 @@ public class ShipmentRepository {
         }
 
         // Very basic search functionality for now, just to exemplify
+        // In a real-world scenario, using postgres, we could use vector search or \
+        // full-text search for better performance and flexibility
         if (filter.search() != null && !filter.search().isEmpty()) {
             sql.append("""
                     AND (

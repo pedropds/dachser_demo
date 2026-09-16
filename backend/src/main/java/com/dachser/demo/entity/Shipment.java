@@ -3,6 +3,9 @@ package com.dachser.demo.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+/**
+ * Entity class representing a Shipment.
+ */
 @Entity
 @Table(name = "shipments")
 @Getter
