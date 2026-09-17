@@ -24,16 +24,16 @@ public class ShipmentFinancialService {
     }
 
     public PaginatedResult<ShipmentFinancialRecord> getShipmentFinancials(Long shipmentId, Integer page, Integer size) {
-        List<ShipmentFinancialRecord> financialRecords = shipmentFinancialRepository
-                .getShipmentFinancialsByShipmentId(shipmentId, page, size);
+        int safePage = (page != null && page >= 0) ? page : 0;
+        int safeSize = (size != null && size > 0) ? size : 20;
 
+        List<ShipmentFinancialRecord> financialRecords = shipmentFinancialRepository
+                .getShipmentFinancialsByShipmentId(shipmentId, safePage, safeSize);
         Integer totalRecords = shipmentFinancialRepository.countShipmentFinancialsByShipmentId(shipmentId);
 
-        Integer totalPages = size > 0
-                ? (int) Math.ceil((double) totalRecords / size)
-                : 0;
+        int totalPages = (int) Math.ceil((double) totalRecords / safeSize);
 
-        return new PaginatedResult<>(financialRecords, totalRecords, totalPages, page);
+        return new PaginatedResult<>(financialRecords, totalRecords, totalPages, safePage);
     }
 
     @Transactional

@@ -19,7 +19,9 @@ public class ShipmentFinancialRepository {
         this.entityManager = entityManager;
     }
 
-    public List<ShipmentFinancialRecord> getShipmentFinancialsByShipmentId(Long shipmentId, @NonNull Integer page, @NonNull Integer size) {
+    public List<ShipmentFinancialRecord> getShipmentFinancialsByShipmentId(Long shipmentId,
+                                                                           @NonNull Integer page,
+                                                                           @NonNull Integer size) {
         var query = entityManager.createQuery(
                 "SELECT s FROM ShipmentFinancialEntity s WHERE s.shipmentId = :shipmentId",
                 ShipmentFinancial.class);

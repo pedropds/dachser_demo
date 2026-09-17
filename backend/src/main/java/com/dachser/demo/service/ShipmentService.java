@@ -18,12 +18,14 @@ public class ShipmentService {
     public PaginatedResult<ShipmentDTO> getShipments(GetShipmentsFilter filter,
                                                      Integer page,
                                                      Integer size) {
-        List<ShipmentDTO> shipments = this.shipmentRepository.findAllShipments(filter, page, size);
-        Integer totalRecords = this.shipmentRepository.countShipments(filter);
-        Integer totalPages = size > 0
-                ? (int) Math.ceil((double) totalRecords / size)
-                : 0;
+        int safePage = (page != null && page >= 0) ? page : 0;
+        int safeSize = (size != null && size > 0) ? size : 20;
 
-        return new PaginatedResult<>(shipments, totalRecords, totalPages, page);
+        List<ShipmentDTO> shipments = this.shipmentRepository.findAllShipments(filter, safePage, safeSize);
+        Integer totalRecords = this.shipmentRepository.countShipments(filter);
+
+        int totalPages = (int) Math.ceil((double) totalRecords / safeSize);
+
+        return new PaginatedResult<>(shipments, totalRecords, totalPages, safePage);
     }
 }
