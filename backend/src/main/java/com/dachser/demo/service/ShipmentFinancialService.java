@@ -23,13 +23,13 @@ public class ShipmentFinancialService {
         this.incomeService = incomeService;
     }
 
-    public PaginatedResult<ShipmentFinancialRecord> getShipmentFinancials(Long shipmentId, int page, int size) {
+    public PaginatedResult<ShipmentFinancialRecord> getShipmentFinancials(Long shipmentId, Integer page, Integer size) {
         List<ShipmentFinancialRecord> financialRecords = shipmentFinancialRepository
                 .getShipmentFinancialsByShipmentId(shipmentId, page, size);
 
-        int totalRecords = shipmentFinancialRepository.countShipmentFinancialsByShipmentId(shipmentId);
+        Integer totalRecords = shipmentFinancialRepository.countShipmentFinancialsByShipmentId(shipmentId);
 
-        int totalPages = size > 0
+        Integer totalPages = size > 0
                 ? (int) Math.ceil((double) totalRecords / size)
                 : 0;
 
