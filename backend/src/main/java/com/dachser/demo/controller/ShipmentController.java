@@ -1,7 +1,7 @@
 package com.dachser.demo.controller;
 
-import com.dachser.demo.dto.GetShipmentsRequest;
-import com.dachser.demo.dto.GetShipmentsResponse;
+import com.dachser.demo.dto.*;
+import com.dachser.demo.entity.Shipment;
 import com.dachser.demo.service.ShipmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,18 @@ public class ShipmentController {
 
     @GetMapping
     public ResponseEntity<GetShipmentsResponse> getShipments(@ModelAttribute GetShipmentsRequest request) {
-        GetShipmentsResponse response = shipmentService.getShipments(request);
+        PaginatedResult<ShipmentDTO> shipments = shipmentService
+                .getShipments(request.filter(), request.page(), request.size());
+
+        GetShipmentsResponse response = GetShipmentsResponse.builder()
+                .data(shipments.data())
+                .paginationMetadata(PaginationMetadata.builder()
+                        .totalPages(shipments.totalPages())
+                        .totalRecords(shipments.totalRecords())
+                        .page(shipments.currentPage())
+                        .build())
+                .build();
+
         return ResponseEntity.ok(response);
     }
 }

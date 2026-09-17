@@ -22,7 +22,9 @@ public class ShipmentRepository {
         this.mapper = mapper;
     }
 
-    public List<ShipmentDTO> findAllShipments(@NonNull GetShipmentsRequest request) {
+    public List<ShipmentDTO> findAllShipments(GetShipmentsFilter filter,
+                                              @NonNull Integer page,
+                                              @NonNull Integer size) {
         StringBuilder sql = new StringBuilder("""
                     SELECT s.id,
                         s.tracking_number,
@@ -37,19 +39,19 @@ public class ShipmentRepository {
         MapSqlParameterSource parameters = new MapSqlParameterSource();
 
         // Dynamic filtering
-        appendFilters(sql, parameters, request);
+        appendFilters(sql, parameters, filter);
 
         //TODO: add dynamic ordering as well
 
         // Pagination
         sql.append(" LIMIT :limit OFFSET :offset");
-        parameters.addValue("limit", request.size());
-        parameters.addValue("offset", request.page() * request.size());
+        parameters.addValue("limit", size);
+        parameters.addValue("offset", page * size);
 
         return jdbcTemplate.query(sql.toString(), parameters, mapper);
     }
 
-    public Integer countShipments(@NonNull GetShipmentsRequest request) {
+    public Integer countShipments(@NonNull GetShipmentsFilter filter) {
         StringBuilder sql = new StringBuilder("""
                     SELECT COUNT(*)
                     FROM shipments s
@@ -58,16 +60,14 @@ public class ShipmentRepository {
                 """);
 
         MapSqlParameterSource parameters = new MapSqlParameterSource();
-        appendFilters(sql, parameters, request);
+        appendFilters(sql, parameters, filter);
 
         return jdbcTemplate.queryForObject(sql.toString(), parameters, Integer.class);
     }
 
     private void appendFilters(StringBuilder sql,
                                MapSqlParameterSource parameters,
-                               @NonNull GetShipmentsRequest request) {
-        GetShipmentsFilter filter = request.filter();
-
+                               @NonNull GetShipmentsFilter filter) {
         if (filter.customerId() != null) {
             sql.append(" AND s.customer_id = :customer_id");
             parameters.addValue("customer_id", filter.customerId());

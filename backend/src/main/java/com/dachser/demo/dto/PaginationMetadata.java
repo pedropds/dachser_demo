@@ -8,4 +8,5 @@ import lombok.Data;
 public class PaginationMetadata {
     private Integer totalRecords;
     private Integer totalPages;
+    private Integer page;
 }

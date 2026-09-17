@@ -1,9 +1,6 @@
 package com.dachser.demo.service;
 
-import com.dachser.demo.dto.CalculateFinancialsCommand;
-import com.dachser.demo.dto.CostRecord;
-import com.dachser.demo.dto.IncomeRecord;
-import com.dachser.demo.dto.ShipmentFinancialRecord;
+import com.dachser.demo.dto.*;
 import com.dachser.demo.repository.ShipmentFinancialRepository;
 import jakarta.transaction.Transactional;
 import org.jspecify.annotations.NonNull;
@@ -24,6 +21,19 @@ public class ShipmentFinancialService {
         this.shipmentFinancialRepository = shipmentFinancialRepository;
         this.costService = costService;
         this.incomeService = incomeService;
+    }
+
+    public PaginatedResult<ShipmentFinancialRecord> getShipmentFinancials(Long shipmentId, int page, int size) {
+        List<ShipmentFinancialRecord> financialRecords = shipmentFinancialRepository
+                .getShipmentFinancialsByShipmentId(shipmentId, page, size);
+
+        int totalRecords = shipmentFinancialRepository.countShipmentFinancialsByShipmentId(shipmentId);
+
+        int totalPages = size > 0
+                ? (int) Math.ceil((double) totalRecords / size)
+                : 0;
+
+        return new PaginatedResult<>(financialRecords, totalRecords, totalPages, page);
     }
 
     @Transactional

@@ -1,7 +1,6 @@
 package com.dachser.demo.controller;
 
-import com.dachser.demo.dto.CalculateFinancialsCommand;
-import com.dachser.demo.dto.ShipmentFinancialRecord;
+import com.dachser.demo.dto.*;
 import com.dachser.demo.service.ShipmentFinancialService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +17,19 @@ public class ShipmentFinancialController {
     }
 
     @GetMapping("/{shipmentId}")
-    public String getShipmentFinancials(@PathVariable Long shipmentId) {
-        return "Hello World";
+    public ResponseEntity<GetShipmentFinancialsResponse> getShipmentFinancials(@ModelAttribute GetShipmentFinancialsRequest request) {
+        PaginatedResult<ShipmentFinancialRecord> result = shipmentFinancialService
+                .getShipmentFinancials(request.shipmentId(), request.page(), request.size());
+
+        GetShipmentFinancialsResponse response = GetShipmentFinancialsResponse.builder()
+                .data(result.data())
+                .paginationMetadata(PaginationMetadata.builder()
+                        .totalPages(result.totalPages())
+                        .totalRecords(result.totalRecords())
+                        .build())
+                .build();
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/calculate")

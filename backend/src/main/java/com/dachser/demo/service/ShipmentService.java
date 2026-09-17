@@ -1,9 +1,6 @@
 package com.dachser.demo.service;
 
-import com.dachser.demo.dto.GetShipmentsRequest;
-import com.dachser.demo.dto.GetShipmentsResponse;
-import com.dachser.demo.dto.PaginationMetadata;
-import com.dachser.demo.dto.ShipmentDTO;
+import com.dachser.demo.dto.*;
 import com.dachser.demo.repository.ShipmentRepository;
 import org.springframework.stereotype.Service;
 
@@ -18,19 +15,15 @@ public class ShipmentService {
         this.shipmentRepository = shipmentRepository;
     }
 
-    public GetShipmentsResponse getShipments(GetShipmentsRequest request) {
-        List<ShipmentDTO> shipments = this.shipmentRepository.findAllShipments(request);
-        Integer totalRecords = this.shipmentRepository.countShipments(request);
-        Integer totalPages = request.size() > 0
-                ? (int) Math.ceil((double) totalRecords / request.size())
+    public PaginatedResult<ShipmentDTO> getShipments(GetShipmentsFilter filter,
+                                                     Integer page,
+                                                     Integer size) {
+        List<ShipmentDTO> shipments = this.shipmentRepository.findAllShipments(filter, page, size);
+        Integer totalRecords = this.shipmentRepository.countShipments(filter);
+        Integer totalPages = size > 0
+                ? (int) Math.ceil((double) totalRecords / size)
                 : 0;
 
-        return GetShipmentsResponse.builder()
-                .data(shipments)
-                .paginationMetadata(PaginationMetadata.builder()
-                        .totalRecords(totalRecords)
-                        .totalPages(totalPages)
-                        .build())
-                .build();
+        return new PaginatedResult<>(shipments, totalRecords, totalPages, page);
     }
 }
