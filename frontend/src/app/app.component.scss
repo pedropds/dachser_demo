@@ -1,0 +1,33 @@
+// Brand Colors
+$dachser-yellow: #ffcc00;
+$dachser-blue: #003366;
+
+// 1. Fixed: Use 100vh (Viewport Height) instead of 100%
+.app-layout-container {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100vh; // <-- Changed here
+}
+
+// 2. Sidenav width
+.app-sidenav {
+  width: 250px;
+}
+
+// 3. Fixed: Added !important to force the color over Material/Bootstrap defaults
+.brand-header {
+  background-color: $dachser-yellow !important; // <-- Changed here
+}
+
+.brand-text {
+  color: $dachser-blue !important;
+}
+
+// 4. Extracted Active Link Styles
+.active-nav-item {
+  background-color: #f8f9fa !important;
+  border-right: 3px solid #0d6efd !important;
+}

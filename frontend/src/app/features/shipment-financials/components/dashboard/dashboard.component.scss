@@ -1,0 +1,43 @@
+.dashboard-container {
+  margin-top: 3rem;
+}
+
+.dashboard-header {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+  }
+}
+
+.financial-card {
+  padding: 0;
+  overflow: hidden; // Ensures the table doesn't bleed over the card's rounded corners
+
+  .financial-table {
+    width: 100%;
+
+    .income-cell {
+      color: var(--bs-success); // Hooking into Bootstrap's native variables
+      font-weight: 600;
+    }
+
+    .cost-cell {
+      color: var(--bs-danger);
+      font-weight: 500;
+    }
+
+    // Custom badge styling that extends Bootstrap's base .badge class behavior
+    .badge-profit {
+      background-color: var(--bs-success);
+      font-size: 1rem;
+      padding: 0.5em 0.7em;
+    }
+
+    .badge-loss {
+      background-color: var(--bs-danger);
+      font-size: 1rem;
+      padding: 0.5em 0.7em;
+    }
+  }
+}

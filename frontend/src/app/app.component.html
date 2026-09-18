@@ -1,0 +1,27 @@
+<mat-sidenav-container class="app-layout-container bg-light">
+  <!-- Left Side Menu -->
+  <mat-sidenav mode="side" opened class="app-sidenav border-end shadow-sm">
+    <!-- Dachser Brand Header -->
+    <div class="brand-header p-3">
+      <h3 class="brand-text mb-0 fw-bold">DACHSER</h3>
+      <small class="brand-text fw-bold">Intelligent Logistics</small>
+    </div>
+
+    <!-- Navigation Links -->
+    <mat-nav-list class="pt-3">
+      <a
+        mat-list-item
+        routerLink="/shipments"
+        routerLinkActive="active-nav-item"
+      >
+        <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
+        <span matListItemTitle>Shipments</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Right Side Dynamic Content -->
+  <mat-sidenav-content class="p-4">
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
