@@ -1,4 +1,3 @@
-/* Adjust the Material Form Field to sit inline properly */
 .search-field {
   width: 100%;
   max-width: 400px;
@@ -21,13 +20,10 @@
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: var(
-          --bs-light
-        ); // Uses Bootstrap's light gray on hover
+        background-color: var(--bs-light);
       }
     }
 
-    // Ensure the badge text is easily readable
     .badge {
       font-size: 0.85rem;
       padding: 0.5em 0.7em;

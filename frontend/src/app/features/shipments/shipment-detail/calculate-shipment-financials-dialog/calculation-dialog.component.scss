@@ -1,0 +1,11 @@
+/* Ensure form fields take up the full width of the dialog */
+mat-form-field {
+  width: 100%;
+}
+
+/* Remove default browser arrows from number inputs for a cleaner look */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

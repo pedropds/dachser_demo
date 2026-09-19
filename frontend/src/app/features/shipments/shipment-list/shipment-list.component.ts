@@ -52,7 +52,10 @@ export class ShipmentListComponent implements OnInit {
   // Search control
   searchControl = new FormControl('');
 
-  constructor(private route: ActivatedRoute, private router: Router) {}
+  constructor(
+    private route: ActivatedRoute,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
     // Read URL state on load
@@ -71,9 +74,9 @@ export class ShipmentListComponent implements OnInit {
   loadShipments() {
     const searchTerm = this.searchControl.value;
     console.log(
-      `Fetching API: page=${this.pageIndex}, size=${this.pageSize}, search=${searchTerm}`
+      `Fetching API: page=${this.pageIndex}, size=${this.pageSize}, search=${searchTerm}`,
     );
-    // HTTP call will go here
+    // TODO: HTTP call will go here
   }
 
   onSearch() {

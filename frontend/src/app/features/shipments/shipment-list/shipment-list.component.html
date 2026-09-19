@@ -85,7 +85,7 @@
             [ngClass]="{
               'bg-success': shipment.status === 'DELIVERED',
               'bg-warning text-dark': shipment.status === 'IN_TRANSIT',
-              'bg-secondary': shipment.status === 'CREATED'
+              'bg-secondary': shipment.status === 'CREATED',
             }"
           >
             {{ shipment.status | titlecase }}
@@ -113,7 +113,7 @@
             class="rounded-0"
             (click)="viewShipment(shipment.trackingNumber)"
           >
-            View Financials
+            View Details
           </button>
         </td>
       </ng-container>
