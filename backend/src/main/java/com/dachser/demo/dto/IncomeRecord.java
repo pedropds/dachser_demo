@@ -8,6 +8,7 @@ public record IncomeRecord(
     Long shipmentId,
     BigDecimal amount,
     String status,
+    String description,
     LocalDateTime createdAt
 ) {
 }

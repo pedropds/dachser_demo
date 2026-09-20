@@ -44,6 +44,7 @@ public class ShipmentFinancialService {
                         command.shipmentId(),
                         dto.amount(),
                         "ACTIVE",
+                        null,
                         null)
                 )
                 .toList();
@@ -55,6 +56,7 @@ public class ShipmentFinancialService {
                         dto.costType(),
                         dto.amount(),
                         "ACTIVE",
+                        null,
                         null)
                 )
                 .toList();
@@ -76,6 +78,7 @@ public class ShipmentFinancialService {
         ShipmentFinancialRecord financialRecord = new ShipmentFinancialRecord(
                 null,
                 command.shipmentId(),
+                null,
                 savedIncomeIds,
                 savedCostIds,
                 totalIncomes,

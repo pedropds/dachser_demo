@@ -16,6 +16,7 @@ public class ShipmentMapper implements RowMapper<ShipmentDTO> {
             rs.getString("tracking_number"),
             rs.getLong("customer_id"),
             rs.getString("customer_name"),
+            rs.getString("description"),
             rs.getString("status")
         );
     }

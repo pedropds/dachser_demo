@@ -27,6 +27,9 @@ public class Income {
     @Column(name = "status", length = 20)
     private String status = "ACTIVE";
 
+    @Column(name = "description")
+    private String description;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

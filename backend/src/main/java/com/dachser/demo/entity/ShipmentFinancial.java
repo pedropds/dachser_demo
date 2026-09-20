@@ -24,6 +24,9 @@ public class ShipmentFinancial {
     @Column(name = "shipment_id", nullable = false)
     private BigInteger shipmentId;
 
+    @Column(name = "description")
+    private String description;
+
     @JdbcTypeCode(SqlTypes.ARRAY)
     @Column(name = "income_ids")
     private BigInteger[] incomeIds;

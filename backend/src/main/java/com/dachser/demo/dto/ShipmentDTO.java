@@ -8,5 +8,6 @@ public record ShipmentDTO(
         String trackingNumber,
         Long customerId,
         String customerName,
+        String description,
         String status
 ) {}

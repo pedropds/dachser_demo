@@ -7,6 +7,7 @@ CREATE TABLE costs
     cost_type   VARCHAR(50)    NOT NULL,
     amount      DECIMAL(10, 2) NOT NULL,
     status      VARCHAR(20) DEFAULT 'ACTIVE', -- e.g., 'ACTIVE', 'VOIDED'
+    description TEXT,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (shipment_id) REFERENCES shipments (id)
 );

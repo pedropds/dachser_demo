@@ -25,4 +25,7 @@ public class Shipment {
 
     @Column(name = "status", nullable = false, length = 50)
     String status = "CREATED";
+
+    @Column(name = "description")
+    private String description;
 }

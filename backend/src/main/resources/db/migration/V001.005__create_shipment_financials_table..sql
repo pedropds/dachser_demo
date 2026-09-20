@@ -4,6 +4,7 @@ CREATE TABLE shipment_financials
 (
     id             BIGINT AUTO_INCREMENT PRIMARY KEY,
     shipment_id    BIGINT         NOT NULL,
+    description    TEXT,
 
     -- Audit Links
     income_ids     BIGINT ARRAY,

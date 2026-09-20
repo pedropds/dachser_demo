@@ -1,7 +1,6 @@
 package com.dachser.demo.repository;
 
 import com.dachser.demo.dto.GetShipmentsFilter;
-import com.dachser.demo.dto.GetShipmentsRequest;
 import com.dachser.demo.dto.ShipmentDTO;
 import com.dachser.demo.mapper.ShipmentMapper;
 import lombok.NonNull;
@@ -30,6 +29,7 @@ public class ShipmentRepository {
                         s.tracking_number,
                         s.customer_id,
                         c.name AS customer_name,
+                        s.description,
                         s.status
                     FROM shipments s
                     JOIN customers c ON s.customer_id = c.id

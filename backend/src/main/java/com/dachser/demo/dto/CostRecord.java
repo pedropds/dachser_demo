@@ -9,6 +9,7 @@ public record CostRecord(
     String costType,
     BigDecimal amount,
     String status,
+    String description,
     LocalDateTime createdAt
 ) {
 }
