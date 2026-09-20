@@ -1,7 +1,6 @@
 package com.dachser.demo.controller;
 
 import com.dachser.demo.dto.*;
-import com.dachser.demo.entity.Shipment;
 import com.dachser.demo.service.ShipmentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
