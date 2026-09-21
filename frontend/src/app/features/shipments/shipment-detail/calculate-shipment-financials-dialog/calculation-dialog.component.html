@@ -1,8 +1,8 @@
 <h2 mat-dialog-title class="fw-bold">New Calculation</h2>
 
-<mat-dialog-content>
-  <form [formGroup]="calcForm" class="d-flex flex-column mt-2">
-    <mat-form-field appearance="outline" class="mb-2">
+<mat-dialog-content class="pt-1 dialog-form">
+  <form [formGroup]="calcForm" class="d-flex flex-column gap-2">
+    <mat-form-field appearance="outline">
       <mat-label>Income</mat-label>
       <input
         matInput
@@ -10,9 +10,10 @@
         formControlName="income"
         placeholder="0.00"
       />
+      <span matTextPrefix>€&nbsp;</span>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="mb-2">
+    <mat-form-field appearance="outline">
       <mat-label>Base Cost</mat-label>
       <input
         matInput
@@ -20,6 +21,7 @@
         formControlName="baseCost"
         placeholder="0.00"
       />
+      <span matTextPrefix>€&nbsp;</span>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
@@ -30,25 +32,27 @@
         formControlName="additionalCost"
         placeholder="0.00"
       />
+      <span matTextPrefix>€&nbsp;</span>
     </mat-form-field>
 
     <mat-form-field appearance="outline">
       <mat-label>Description</mat-label>
-      <input
+      <textarea
         matInput
-        type="string"
         formControlName="description"
+        rows="3"
         placeholder="Description of the financial transaction"
-      />
+      ></textarea>
     </mat-form-field>
   </form>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end" class="mb-2 pe-3">
-  <button mat-button mat-dialog-close>Cancel</button>
+<mat-dialog-actions align="end" class="px-3 pb-3">
+  <button mat-button type="button" mat-dialog-close>Cancel</button>
   <button
     mat-flat-button
     color="primary"
+    type="submit"
     [disabled]="calcForm.invalid"
     (click)="submit()"
   >

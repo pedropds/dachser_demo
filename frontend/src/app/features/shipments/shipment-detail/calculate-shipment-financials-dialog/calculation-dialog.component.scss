@@ -1,11 +1,29 @@
-/* Ensure form fields take up the full width of the dialog */
+// Host styling ensures the dialog container expands smoothly and manages scrolling
+:host {
+  display: flex;
+  flex-direction: column;
+  max-height: 85vh;
+}
+
+mat-dialog-content {
+  flex: 1;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
 mat-form-field {
   width: 100%;
 }
 
-/* Remove default browser arrows from number inputs for a cleaner look */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+.dialog-form {
+  padding: 1rem !important;
+}
+
+// Hide WebKit spin buttons on number inputs using SCSS nesting
+input {
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
