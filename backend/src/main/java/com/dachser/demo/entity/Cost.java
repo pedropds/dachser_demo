@@ -17,7 +17,6 @@ public class Cost {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // We treat the foreign key just like a normal column
     @Column(name = "shipment_id", nullable = false)
     private Long shipmentId;
 

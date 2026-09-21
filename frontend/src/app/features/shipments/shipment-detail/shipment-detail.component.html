@@ -42,7 +42,7 @@
           *matCellDef="let element"
           class="border-bottom border-dark"
         >
-          {{ element.income | currency: "USD" }}
+          {{ element.income | currency: "EUR" }}
         </td>
       </ng-container>
 
@@ -59,7 +59,7 @@
           *matCellDef="let element"
           class="border-bottom border-dark border-start"
         >
-          {{ element.totalCosts | currency: "USD" }}
+          {{ element.totalCosts | currency: "EUR" }}
         </td>
       </ng-container>
 
@@ -82,7 +82,7 @@
               'text-danger fw-bold': element.profitOrLoss < 0,
             }"
           >
-            {{ element.profitOrLoss | currency: "USD" }}
+            {{ element.profitOrLoss | currency: "EUR" }}
           </span>
         </td>
       </ng-container>
