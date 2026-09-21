@@ -8,11 +8,23 @@
     </div>
 
     <!-- Navigation Links -->
+    <!-- Inside your <mat-sidenav> ... -->
     <mat-nav-list class="pt-3">
+      <!-- New Home Link -->
+      <a
+        mat-list-item
+        routerLink="/home"
+        routerLinkActive="bg-light border-end border-warning border-3"
+      >
+        <mat-icon matListItemIcon>home</mat-icon>
+        <span matListItemTitle>Home</span>
+      </a>
+
+      <!-- Existing Shipments Link -->
       <a
         mat-list-item
         routerLink="/shipments"
-        routerLinkActive="active-nav-item"
+        routerLinkActive="bg-light border-end border-warning border-3"
       >
         <mat-icon matListItemIcon>account_balance_wallet</mat-icon>
         <span matListItemTitle>Shipments</span>

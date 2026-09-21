@@ -36,6 +36,7 @@ export class CalculationDialogComponent {
       income: [null, [Validators.required, Validators.min(0)]],
       baseCost: [null, [Validators.required, Validators.min(0)]],
       additionalCost: [null, [Validators.min(0)]],
+      description: [null, [Validators.required, Validators.minLength(5)]],
     });
   }
 

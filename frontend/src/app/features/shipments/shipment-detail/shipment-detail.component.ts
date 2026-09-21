@@ -26,16 +26,31 @@ export class ShipmentDetailComponent implements OnInit {
   shipmentId: string = '';
 
   financialHistory = [
-    { income: 1000, totalCosts: 200, profitOrLoss: 800 },
-    { income: 500, totalCosts: 900, profitOrLoss: -400 },
+    {
+      income: 1000,
+      totalCosts: 200,
+      profitOrLoss: 800,
+      description: 'Some random description',
+    },
+    {
+      income: 500,
+      totalCosts: 900,
+      profitOrLoss: -400,
+      description: 'Another random description',
+    },
   ];
 
-  displayedColumns: string[] = ['income', 'totalCosts', 'profitOrLoss'];
+  displayedColumns: string[] = [
+    'income',
+    'totalCosts',
+    'profitOrLoss',
+    'description',
+  ];
 
   constructor(
     private route: ActivatedRoute,
     private location: Location,
-    private dialog: MatDialog, // <-- Inject MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -66,6 +81,7 @@ export class ShipmentDetailComponent implements OnInit {
             income: totalIncome,
             totalCosts: totalCosts,
             profitOrLoss: profitOrLoss,
+            description: result.description,
           },
           ...this.financialHistory,
         ];
