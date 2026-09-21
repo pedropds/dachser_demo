@@ -23,7 +23,7 @@ public class ShipmentFinancialRepository {
                                                                            @NonNull Integer page,
                                                                            @NonNull Integer size) {
         var query = entityManager.createQuery(
-                "SELECT s FROM ShipmentFinancialEntity s WHERE s.shipmentId = :shipmentId",
+                "SELECT s FROM ShipmentFinancial s WHERE s.shipmentId = :shipmentId",
                 ShipmentFinancial.class);
 
         query.setParameter("shipmentId", shipmentId);
@@ -39,7 +39,7 @@ public class ShipmentFinancialRepository {
 
     public Integer countShipmentFinancialsByShipmentId(Long shipmentId) {
         var query = entityManager.createQuery(
-                "SELECT COUNT(s) FROM ShipmentFinancialEntity s WHERE s.shipmentId = :shipmentId",
+                "SELECT COUNT(s) FROM ShipmentFinancial s WHERE s.shipmentId = :shipmentId",
                 Long.class);
 
         query.setParameter("shipmentId", shipmentId);

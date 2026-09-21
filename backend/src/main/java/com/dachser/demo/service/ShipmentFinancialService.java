@@ -7,6 +7,7 @@ import org.jspecify.annotations.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -78,13 +79,13 @@ public class ShipmentFinancialService {
         ShipmentFinancialRecord financialRecord = new ShipmentFinancialRecord(
                 null,
                 command.shipmentId(),
-                null,
+                command.description(),
                 savedIncomeIds,
                 savedCostIds,
                 totalIncomes,
                 totalCosts,
                 profitOrLoss,
-                null
+                LocalDateTime.now()
         );
 
         return shipmentFinancialRepository.saveShipmentFinancial(financialRecord);
