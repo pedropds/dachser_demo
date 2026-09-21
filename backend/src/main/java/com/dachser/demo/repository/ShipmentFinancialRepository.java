@@ -22,8 +22,10 @@ public class ShipmentFinancialRepository {
     public List<ShipmentFinancialRecord> getShipmentFinancialsByShipmentId(Long shipmentId,
                                                                            @NonNull Integer page,
                                                                            @NonNull Integer size) {
-        var query = entityManager.createQuery(
-                "SELECT s FROM ShipmentFinancial s WHERE s.shipmentId = :shipmentId",
+        var query = entityManager.createQuery("""
+                        SELECT s FROM ShipmentFinancial s WHERE s.shipmentId = :shipmentId
+                        ORDER BY s.calculatedAt DESC
+                        """,
                 ShipmentFinancial.class);
 
         query.setParameter("shipmentId", shipmentId);
