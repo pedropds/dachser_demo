@@ -9,6 +9,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { ShipmentService } from '../services/shipment.service';
+import { Shipment } from '../models/shipment.model';
 
 @Component({
   selector: 'app-shipment-list',
@@ -31,21 +33,16 @@ import { MatCardModule } from '@angular/material/card';
 export class ShipmentListComponent implements OnInit {
   displayedColumns: string[] = [
     'trackingNumber',
+    'customerName',
     'customerId',
     'status',
     'actions',
   ];
 
-  // Mock data based on the database inserts
-  dataSource = [
-    { id: 1, trackingNumber: '0001', customerId: 1, status: 'DELIVERED' },
-    { id: 2, trackingNumber: '0002', customerId: 1, status: 'IN_TRANSIT' },
-    { id: 3, trackingNumber: '0003', customerId: 1, status: 'CREATED' },
-    { id: 4, trackingNumber: '0004', customerId: 2, status: 'DELIVERED' },
-  ];
+  dataSource: Shipment[] = [];
 
   // Pagination state
-  totalRecords = 4;
+  totalRecords = 0;
   pageSize = 10;
   pageIndex = 0;
 
@@ -55,17 +52,16 @@ export class ShipmentListComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
+    private shipmentService: ShipmentService,
   ) {}
 
   ngOnInit() {
-    // Read URL state on load
     this.route.queryParams.subscribe((params) => {
       this.pageIndex = params['page'] ? +params['page'] : 0;
       this.pageSize = params['size'] ? +params['size'] : 10;
-
-      if (params['search']) {
-        this.searchControl.setValue(params['search'], { emitEvent: false });
-      }
+      this.searchControl.setValue(params['filter.search'], {
+        emitEvent: false,
+      });
 
       this.loadShipments();
     });
@@ -73,17 +69,27 @@ export class ShipmentListComponent implements OnInit {
 
   loadShipments() {
     const searchTerm = this.searchControl.value;
-    console.log(
-      `Fetching API: page=${this.pageIndex}, size=${this.pageSize}, search=${searchTerm}`,
-    );
-    // TODO: HTTP call will go here
+
+    this.shipmentService
+      .getShipments(this.pageIndex, this.pageSize, searchTerm)
+      .subscribe({
+        next: (response) => {
+          this.dataSource = response.data;
+          this.totalRecords = response.paginationMetadata.totalRecords;
+        },
+        error: (err) => {
+          console.error('Failed to load shipments', err);
+        },
+      });
   }
 
   onSearch() {
-    // Reset to page 0 when performing a new search, and update the URL
     this.router.navigate([], {
       relativeTo: this.route,
-      queryParams: { search: this.searchControl.value || null, page: 0 },
+      queryParams: {
+        'filter.search': this.searchControl.value || null,
+        page: 0,
+      },
       queryParamsHandling: 'merge',
     });
   }
@@ -96,7 +102,7 @@ export class ShipmentListComponent implements OnInit {
     });
   }
 
-  viewShipment(shipmentId: number) {
-    this.router.navigate(['/shipments', shipmentId]);
+  viewShipment(trackingNumber: string) {
+    this.router.navigate(['/shipments', trackingNumber]);
   }
 }
