@@ -1,4 +1,3 @@
-// Host styling ensures the dialog container expands smoothly and manages scrolling
 :host {
   display: flex;
   flex-direction: column;
@@ -19,7 +18,6 @@ mat-form-field {
   padding: 1rem !important;
 }
 
-// Hide WebKit spin buttons on number inputs using SCSS nesting
 input {
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {

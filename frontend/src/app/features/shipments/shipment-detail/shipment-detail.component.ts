@@ -1,14 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // <-- Import Paginator
 import { CalculationDialogComponent } from './calculate-shipment-financials-dialog/calculation-dialog.component';
 import {
   CalculateFinancialsRequest,
+  PaginatedFinancials,
   ShipmentFinancial,
 } from '../../shipment-financials/models/financial.model';
 import { FinancialService } from '../../shipment-financials/services/financial.service';
@@ -23,6 +25,7 @@ import { FinancialService } from '../../shipment-financials/services/financial.s
     MatCardModule,
     MatTableModule,
     MatDialogModule,
+    MatPaginatorModule,
   ],
   templateUrl: './shipment-detail.component.html',
   styleUrl: './shipment-detail.component.scss',
@@ -39,8 +42,14 @@ export class ShipmentDetailComponent implements OnInit {
     'calculatedAt',
   ];
 
+  // Pagination state
+  totalRecords = 0;
+  pageSize = 10;
+  pageIndex = 0;
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router, // <-- Inject Router
     private location: Location,
     private dialog: MatDialog,
     private financialService: FinancialService,
@@ -48,15 +57,33 @@ export class ShipmentDetailComponent implements OnInit {
 
   ngOnInit() {
     this.shipmentId = this.route.snapshot.paramMap.get('id') || '';
-    this.loadFinancialHistory();
+
+    // Read query params for pagination
+    this.route.queryParams.subscribe((params) => {
+      this.pageIndex = params['page'] ? +params['page'] : 0;
+      this.pageSize = params['size'] ? +params['size'] : 10;
+      this.loadFinancialHistory();
+    });
   }
 
   loadFinancialHistory() {
-    this.financialService.getHistory(this.shipmentId).subscribe({
-      next: (response) => {
-        this.financialHistory = [...response.data];
-      },
-      error: (err) => console.error('Error fetching history', err),
+    this.financialService
+      .getHistory(this.shipmentId, this.pageIndex, this.pageSize) // <-- Pass params
+      .subscribe({
+        next: (response: PaginatedFinancials) => {
+          this.financialHistory = [...response.data];
+          this.totalRecords = response.paginationMetadata.totalRecords; // <-- Update total records
+        },
+        error: (err) => console.error('Error fetching history', err),
+      });
+  }
+
+  onPageChange(event: PageEvent) {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: { page: event.pageIndex, size: event.pageSize },
+      queryParamsHandling: 'merge',
+      replaceUrl: true, // prevent this from pushing another entry to the router history.
     });
   }
 
@@ -72,15 +99,13 @@ export class ShipmentDetailComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        // Map to the exact structure expected by the backend record
         const requestPayload: CalculateFinancialsRequest = {
-          shipmentId: Number(this.shipmentId), // Convert URL param to a number
+          shipmentId: Number(this.shipmentId),
           incomes: [{ amount: result.income }],
           costs: [],
           description: result.description,
         };
 
-        // Add base cost
         if (result.baseCost > 0) {
           requestPayload.costs.push({
             costType: 'BASE_COST',
@@ -88,7 +113,6 @@ export class ShipmentDetailComponent implements OnInit {
           });
         }
 
-        // Conditionally add additional cost if the user provided one
         if (result.additionalCost > 0) {
           requestPayload.costs.push({
             costType: 'ADDITIONAL_COST',
@@ -97,12 +121,13 @@ export class ShipmentDetailComponent implements OnInit {
         }
 
         this.financialService.calculate(requestPayload).subscribe({
-          next: (newFinancialRecord) => {
-            // Push the new record to the top of the table seamlessly
+          next: (newFinancialRecord: ShipmentFinancial) => {
+            // Push the new record and increment total for immediate UI feedback
             this.financialHistory = [
               newFinancialRecord,
               ...this.financialHistory,
             ];
+            this.totalRecords++;
           },
           error: (err) => {
             console.error('Failed to save calculation', err);
