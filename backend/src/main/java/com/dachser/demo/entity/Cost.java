@@ -26,6 +26,9 @@ public class Cost {
     @Column(name = "amount", nullable = false, precision = 10, scale = 2)
     private BigDecimal amount;
 
+    @Column(name = "currency", length = 5)
+    private String currency;
+
     @Column(name = "status", length = 20)
     private String status = "ACTIVE";
 

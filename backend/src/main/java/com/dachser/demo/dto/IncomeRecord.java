@@ -9,6 +9,7 @@ public record IncomeRecord(
     BigDecimal amount,
     String status,
     String description,
+    String currency,
     LocalDateTime createdAt
 ) {
 }

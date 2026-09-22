@@ -44,6 +44,9 @@ public class ShipmentFinancial {
     @Column(name = "profit_or_loss", nullable = false, precision = 10, scale = 2)
     private BigDecimal profitOrLoss;
 
+    @Column(name = "currency", nullable = false, length = 5)
+    private String currency;
+
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false, updatable = false)
     private LocalDateTime calculatedAt;

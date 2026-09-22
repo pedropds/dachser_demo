@@ -13,6 +13,7 @@ public record ShipmentFinancialRecord(
         BigDecimal income,
         BigDecimal totalCosts,
         BigDecimal profitOrLoss,
+        String currency,
         LocalDateTime calculatedAt
 ) {
 }

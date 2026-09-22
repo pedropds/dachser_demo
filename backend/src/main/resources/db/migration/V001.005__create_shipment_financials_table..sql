@@ -14,6 +14,7 @@ CREATE TABLE shipment_financials
     income         DECIMAL(10, 2) NOT NULL,
     total_costs    DECIMAL(10, 2) NOT NULL,
     profit_or_loss DECIMAL(10, 2) NOT NULL,
+    currency       VARCHAR(5) NOT NULL,
     calculated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     FOREIGN KEY (shipment_id) REFERENCES shipments (id)

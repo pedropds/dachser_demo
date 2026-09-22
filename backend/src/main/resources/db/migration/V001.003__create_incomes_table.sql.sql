@@ -5,6 +5,7 @@ CREATE TABLE incomes
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     shipment_id BIGINT         NOT NULL,
     amount      DECIMAL(10, 2) NOT NULL,
+    currency    VARCHAR(5) NOT NULL,
     status      VARCHAR(20) DEFAULT 'ACTIVE', -- e.g., 'ACTIVE', 'VOIDED'
     description TEXT,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,

@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class ShipmentFinancialService {
@@ -39,6 +41,8 @@ public class ShipmentFinancialService {
 
     @Transactional
     public ShipmentFinancialRecord calculateAndSaveSnapshot(@NonNull CalculateFinancialsCommand command) {
+        String currency = validateCurrencyConsistency(command);
+
         List<IncomeRecord> newIncomes = command.incomes().stream()
                 .map(dto -> new IncomeRecord(
                         null,
@@ -46,7 +50,8 @@ public class ShipmentFinancialService {
                         dto.amount(),
                         "ACTIVE",
                         null,
-                        null)
+                        currency,
+                        LocalDateTime.now())
                 )
                 .toList();
 
@@ -58,7 +63,8 @@ public class ShipmentFinancialService {
                         dto.amount(),
                         "ACTIVE",
                         null,
-                        null)
+                        currency,
+                        LocalDateTime.now())
                 )
                 .toList();
 
@@ -85,6 +91,7 @@ public class ShipmentFinancialService {
                 totalIncomes,
                 totalCosts,
                 profitOrLoss,
+                currency,
                 LocalDateTime.now()
         );
 
@@ -101,5 +108,30 @@ public class ShipmentFinancialService {
         return costs.stream()
                 .map(CostRecord::amount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private String validateCurrencyConsistency(CalculateFinancialsCommand command) {
+        Set<String> incomeCurrencies = command.incomes().stream()
+                .map(CalculateFinancialsCommand.IncomeEntry::currency)
+                .collect(Collectors.toSet());
+
+        Set<String> costCurrencies = command.costs().stream()
+                .map(CalculateFinancialsCommand.CostEntry::currency)
+                .collect(Collectors.toSet());
+
+        if (incomeCurrencies.size() > 1 || costCurrencies.size() > 1) {
+            throw new IllegalArgumentException("Incomes or costs have inconsistent currencies.");
+        }
+
+        String incomeCurrency = incomeCurrencies.stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("No income records found."));
+        String costCurrency = costCurrencies.stream().findFirst().orElseThrow(
+                () -> new IllegalArgumentException("No cost records found."));
+
+        if (!incomeCurrency.equals(costCurrency)) {
+            throw new IllegalArgumentException("Incomes and costs have different currencies.");
+        }
+
+        return incomeCurrency; // or costCurrency, since they are the same
     }
 }

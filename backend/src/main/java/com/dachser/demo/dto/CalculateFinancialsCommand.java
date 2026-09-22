@@ -13,11 +13,21 @@ public record CalculateFinancialsCommand(
 ) {
     // Nested records to strictly define the expected input shapes
     public record IncomeEntry(
-            BigDecimal amount
-    ) {}
+            @NonNull BigDecimal amount,
+            String currency
+    ) {
+        public IncomeEntry {
+            if (currency == null) currency = "EUR";
+        }
+    }
 
     public record CostEntry(
-            String costType, // e.g., "BASE_COST", "ADDITIONAL_COST"
-            BigDecimal amount
-    ) {}
+            @NonNull String costType, // e.g., "BASE_COST", "ADDITIONAL_COST"
+            @NonNull BigDecimal amount,
+            String currency
+    ) {
+        public CostEntry {
+            if (currency == null) currency = "EUR";
+        }
+    }
 }
