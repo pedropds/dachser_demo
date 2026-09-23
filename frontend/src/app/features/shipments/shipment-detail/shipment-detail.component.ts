@@ -7,11 +7,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import {
-  MatSnackBar,
-  MatSnackBarConfig,
-  MatSnackBarModule,
-} from '@angular/material/snack-bar';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CalculationDialogComponent } from './calculate-shipment-financials-dialog/calculation-dialog.component';
 import {
   CalculateFinancialsRequest,
