@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ReactiveFormsModule,
@@ -26,6 +26,8 @@ import { MatInputModule } from '@angular/material/input';
   styleUrl: './calculation-dialog.component.scss',
 })
 export class CalculationDialogComponent {
+  @Output() onSubmit = new EventEmitter<any>();
+
   calcForm: FormGroup;
 
   constructor(
@@ -42,7 +44,7 @@ export class CalculationDialogComponent {
 
   submit() {
     if (this.calcForm.valid) {
-      this.dialogRef.close(this.calcForm.value);
+      this.onSubmit.emit(this.calcForm.value);
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,7 +6,12 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // <-- Import Paginator
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import {
+  MatSnackBar,
+  MatSnackBarConfig,
+  MatSnackBarModule,
+} from '@angular/material/snack-bar';
 import { CalculationDialogComponent } from './calculate-shipment-financials-dialog/calculation-dialog.component';
 import {
   CalculateFinancialsRequest,
@@ -14,6 +19,7 @@ import {
   ShipmentFinancial,
 } from '../../shipment-financials/models/financial.model';
 import { FinancialService } from '../../shipment-financials/services/financial.service';
+import { SnackBarService } from '../../../shared/components/services/snack-bar.service';
 
 @Component({
   selector: 'app-shipment-detail',
@@ -26,11 +32,14 @@ import { FinancialService } from '../../shipment-financials/services/financial.s
     MatTableModule,
     MatDialogModule,
     MatPaginatorModule,
+    MatSnackBarModule,
   ],
   templateUrl: './shipment-detail.component.html',
   styleUrl: './shipment-detail.component.scss',
 })
 export class ShipmentDetailComponent implements OnInit {
+  private snackBarService = inject(SnackBarService);
+
   shipmentId: string = '';
   financialHistory: ShipmentFinancial[] = [];
 
@@ -49,7 +58,7 @@ export class ShipmentDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private router: Router, // <-- Inject Router
+    private router: Router,
     private location: Location,
     private dialog: MatDialog,
     private financialService: FinancialService,
@@ -68,11 +77,11 @@ export class ShipmentDetailComponent implements OnInit {
 
   loadFinancialHistory() {
     this.financialService
-      .getHistory(this.shipmentId, this.pageIndex, this.pageSize) // <-- Pass params
+      .getHistory(this.shipmentId, this.pageIndex, this.pageSize)
       .subscribe({
         next: (response: PaginatedFinancials) => {
           this.financialHistory = [...response.data];
-          this.totalRecords = response.paginationMetadata.totalRecords; // <-- Update total records
+          this.totalRecords = response.paginationMetadata.totalRecords;
         },
         error: (err) => console.error('Error fetching history', err),
       });
@@ -97,8 +106,8 @@ export class ShipmentDetailComponent implements OnInit {
       disableClose: true,
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
+    const submitSub = dialogRef.componentInstance.onSubmit.subscribe(
+      (result) => {
         const requestPayload: CalculateFinancialsRequest = {
           shipmentId: Number(this.shipmentId),
           incomes: [{ amount: result.income }],
@@ -122,18 +131,34 @@ export class ShipmentDetailComponent implements OnInit {
 
         this.financialService.calculate(requestPayload).subscribe({
           next: (newFinancialRecord: ShipmentFinancial) => {
-            // Push the new record and increment total for immediate UI feedback
             this.financialHistory = [
               newFinancialRecord,
               ...this.financialHistory,
             ];
             this.totalRecords++;
+
+            this.snackBarService.openSuccess(
+              'Financial record added successfully',
+              'Close',
+              { duration: 5000 },
+            );
+
+            dialogRef.close();
           },
           error: (err) => {
+            this.snackBarService.openError(
+              'Failed to add new financial record.',
+              'Close',
+              { duration: 5000 },
+            );
             console.error('Failed to save calculation', err);
           },
         });
-      }
+      },
+    );
+
+    dialogRef.afterClosed().subscribe(() => {
+      submitSub.unsubscribe();
     });
   }
 }
