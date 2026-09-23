@@ -8,6 +8,6 @@ import java.util.List;
 @Data
 @Builder
 public class GetShipmentsResponse {
-    private List<ShipmentDTO> data;
+    private List<ShipmentRecord> data;
     private PaginationMetadata paginationMetadata;
 }

@@ -1,7 +1,7 @@
 package com.dachser.demo.repository;
 
 import com.dachser.demo.dto.GetShipmentsFilter;
-import com.dachser.demo.dto.ShipmentDTO;
+import com.dachser.demo.dto.ShipmentRecord;
 import com.dachser.demo.mapper.ShipmentMapper;
 import lombok.NonNull;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -21,9 +21,9 @@ public class ShipmentRepository {
         this.mapper = mapper;
     }
 
-    public List<ShipmentDTO> findAllShipments(GetShipmentsFilter filter,
-                                              @NonNull Integer page,
-                                              @NonNull Integer size) {
+    public List<ShipmentRecord> findAllShipments(GetShipmentsFilter filter,
+                                                 @NonNull Integer page,
+                                                 @NonNull Integer size) {
         StringBuilder sql = new StringBuilder("""
                     SELECT s.id,
                         s.tracking_number,

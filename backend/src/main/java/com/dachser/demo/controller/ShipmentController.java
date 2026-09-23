@@ -20,7 +20,7 @@ public class ShipmentController {
 
     @GetMapping
     public ResponseEntity<GetShipmentsResponse> getShipments(@ModelAttribute GetShipmentsRequest request) {
-        PaginatedResult<ShipmentDTO> shipments = shipmentService
+        PaginatedResult<ShipmentRecord> shipments = shipmentService
                 .getShipments(request.filter(), request.page(), request.size());
 
         GetShipmentsResponse response = GetShipmentsResponse.builder()
