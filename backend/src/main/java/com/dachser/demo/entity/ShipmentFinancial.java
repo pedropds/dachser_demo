@@ -4,11 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,21 +16,19 @@ public class ShipmentFinancial {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @Column(name = "shipment_id", nullable = false)
-    private BigInteger shipmentId;
+    private Long shipmentId;
 
     @Column(name = "description")
     private String description;
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "income_ids")
-    private BigInteger[] incomeIds;
+    @Column(name = "income_ids", columnDefinition = "BIGINT ARRAY")
+    private Long[] incomeIds;
 
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    @Column(name = "cost_ids")
-    private BigInteger[] costIds;
+    @Column(name = "cost_ids", columnDefinition = "BIGINT ARRAY")
+    private Long[] costIds;
 
     @Column(name = "income", nullable = false, precision = 10, scale = 2)
     private BigDecimal income;

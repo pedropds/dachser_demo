@@ -4,7 +4,7 @@ import com.dachser.demo.dto.ShipmentFinancialRecord;
 import com.dachser.demo.entity.ShipmentFinancial;
 import com.dachser.demo.mapper.ShipmentFinancialMapper;
 import jakarta.persistence.EntityManager;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

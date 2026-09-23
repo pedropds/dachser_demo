@@ -6,7 +6,6 @@ import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 
 @Entity
@@ -16,10 +15,10 @@ import java.time.LocalDateTime;
 public class Income {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @Column(name = "shipment_id")
-    private BigInteger shipmentId;
+    private Long shipmentId;
 
     @Column(name = "amount", precision = 10, scale = 2)
     private BigDecimal amount;

@@ -21,7 +21,7 @@ public class Shipment {
     String trackingNumber;
 
     @Column(name = "customer_id", nullable = false)
-    BigInteger customerId;
+    Long customerId;
 
     @Column(name = "status", nullable = false, length = 50)
     String status = "CREATED";

@@ -3,7 +3,7 @@ package com.dachser.demo.service;
 import com.dachser.demo.dto.*;
 import com.dachser.demo.repository.ShipmentFinancialRepository;
 import jakarta.transaction.Transactional;
-import org.jspecify.annotations.NonNull;
+import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
