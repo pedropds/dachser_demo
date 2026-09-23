@@ -13,3 +13,14 @@ body {
   --dachser-yellow: #ffcc00;
   --dachser-blue: #003366;
 }
+
+.custom-snackbar-container {
+  .mdc-snackbar__surface {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    padding: 0 !important;
+  }
+}

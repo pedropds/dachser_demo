@@ -1,0 +1,12 @@
+<div class="custom-snackbar" [ngClass]="data.type">
+  <span class="custom-snackbar-message">{{ data.message }}</span>
+
+  @if (data.action) {
+    <button
+      class="custom-snackbar-action"
+      (click)="snackBarRef.dismissWithAction()"
+    >
+      {{ data.action }}
+    </button>
+  }
+</div>
