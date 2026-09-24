@@ -44,6 +44,7 @@ export class ShipmentDetailComponent implements OnInit {
     'totalCosts',
     'profitOrLoss',
     'description',
+    'createdBy',
     'calculatedAt',
   ];
 

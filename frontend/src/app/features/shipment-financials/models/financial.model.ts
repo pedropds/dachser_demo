@@ -1,6 +1,8 @@
 export interface ShipmentFinancial {
   id: number;
   shipmentId: number;
+  createdBy: number;
+  createdByUsername: string;
   description: string;
   income: number;
   totalCosts: number;
