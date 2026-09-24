@@ -23,13 +23,17 @@ The database is designed around third normal form (3NF) principles with speciali
 
 ### Schema Breakdown & Rationale
 
+`users`
+
+**Rationale**: Essential for enterprise-grade auditability and compliance. In logistics finance, tracking who generated a financial snapshot or authorized an additional cost is just as critical as tracking what changed. By linking the `incomes`, `costs`, and `shipment_financials` tables to a specific operator via the `created_by` field, the system maintains a strict, unalterable audit trail. Modeling this identity relationship from day one ensures the database is fully prepared for future Identity and Access Management (IAM) integration.
+
 `customers`
 
 **Rationale**: Separates customer identity and metadata from physical freight tracking. This prevents data duplication and ensures that customer metadata updates (e.g., tax ID changes) apply globally without altering existing shipment records.
 
 `shipments`
 
-**Rationale**: Represents the physical movement of freight. It acts as the central anchor for tracking numbers, operational lifecycle statuses (`CREATED, IN_TRANSIT, DELIVERED`), and links directly to the customer entity.
+**Rationale**: Represents the physical movement of freight. It acts as the central anchor for tracking numbers, operational lifecycle statuses (`CREATED`, `IN_TRANSIT`, `DELIVERED`), and links directly to the customer entity.
 
 `incomes`
 
@@ -51,13 +55,13 @@ In real-world logistics, the financial profile of a shipment is rarely a single 
 
 By isolating incomes and costs into their own dedicated tables, we create a highly flexible, append-only architecture. Every financial event is itemized, categorized (`BASE_COST`, `ADDITIONAL_COST`), and tracked independently with its own status and currency.
 
-#### Why shipment_financials Uses Plural IDs (`income_ids, cost_ids`)
+#### Why shipment_financials Uses Plural IDs (`income_ids`, `cost_ids`)
 
-The shipment_financials table serves as a point-in-time snapshot (a ledger entry) of a shipment's profitability. Because a shipment has multiple fragmented costs and incomes, a single P&L calculation must aggregate several rows at once. By storing arrays of IDs (`income_ids`, `cost_ids`), the financial snapshot creates a strict audit trail. If a snapshot declares a $500 profit, the plural IDs act as a receipt, proving exactly which specific line items were included in that mathematical result at that specific moment.
+The `shipment_financials` table serves as a point-in-time snapshot (a ledger entry) of a shipment's profitability. Because a shipment has multiple fragmented costs and incomes, a single P&L calculation must aggregate several rows at once. By storing arrays of IDs (`income_ids`, `cost_ids`), the financial snapshot creates a strict audit trail. If a snapshot declares a $500 profit, the plural IDs act as a receipt, proving exactly which specific line items were included in that mathematical result at that specific moment.
 
 #### Flexibility for Future Alterations
 
-This design accommodates the volatile nature of freight billing. If a late customs fine arrives three weeks after a shipment is delivered, the system does not need to alter past records. It simply inserts a new row into the costs table and triggers a new calculation. The new shipment_financials record will link to the original `income_ids` and the updated `cost_ids`, capturing the new profit margin without erasing the historical record of what the profit used to be.
+This design accommodates the volatile nature of freight billing. If a late customs fine arrives three weeks after a shipment is delivered, the system does not need to alter past records. It simply inserts a new row into the costs table and triggers a new calculation. The new `shipment_financials` record will link to the original `income_ids` and the updated `cost_ids`, capturing the new profit margin without erasing the historical record of what the profit used to be.
 
 #### What Would Happen If These Tables Didn't Exist?
 
@@ -73,17 +77,25 @@ The backend is built with Spring Boot using an N-Tier Clean Architecture pattern
 
 ### Database Migrations with Flyway
 
-Instead of relying on Hibernate's ddl-auto properties (which can be unpredictable and dangerous in production environments), we utilize Flyway for database version control.
+Instead of relying on Hibernate's `ddl-auto` properties (which can be unpredictable and dangerous in production environments), we utilize Flyway for database version control.
 
 - **Benefits**: Flyway ensures deterministic, reproducible schema evolutions across all environments. It tracks which migration scripts have been applied, guaranteeing that the database structure perfectly matches the application's expectations on startup.
 
 ### Layer Separation
 
-1. **Controller Layer**: Acts as an HTTP gateway. Responsible for request routing, query parameter parsing, input validation (@Valid), and mapping execution results to standard HTTP status codes. Contains no business or calculation logic.
+1. **Controller Layer**: Acts as an HTTP gateway. Responsible for request routing, query parameter parsing, input validation (`@Valid`), and mapping execution results to standard HTTP status codes. Contains no business or calculation logic.
 
-2. **Service Layer**: Houses the core business rules, transactional boundaries (@Transactional), and calculation pipelines. Evaluates financial commands, coordinates domain entities, processes currency alignments, and handles audit record generation.
+2. **Service Layer**: Houses the core business rules, transactional boundaries (`@Transactional`), and calculation pipelines. Evaluates financial commands, coordinates domain entities, processes currency alignments, and handles audit record generation.
 
 3. **Repository Layer**: Encapsulates database communication through Spring Data JPA interfaces.
+
+### Deliberate Avoidance of JPA Relationship Annotations
+
+A conscious architectural decision was made to avoid complex JPA relationship annotations (such as `@OneToMany`, `@ManyToOne`, or `@ManyToMany`). Instead of building deeply nested object graphs (e.g., a `ShipmentEntity` containing a `List<CostEntity>`), entities reference each other strictly by their database IDs (e.g., `Long customerId`, `Long createdBy`).
+
+- **Elimination of "Hibernate Magic"**: JPA relationships often introduce hidden performance traps, most notably the N+1 query problem or unexpected `LazyInitializationException` errors. By storing raw IDs, the application retains absolute control over when and how data is fetched.
+- **Explicit Querying**: When related data is needed (such as fetching a User's name to enrich a financial record), we utilize explicit JPQL projection queries alongside `@Transient` fields. This ensures we only query exactly what we need—nothing more, nothing less.
+- **Readability and Debugging**: While this approach requires slightly more explicit code to manually link or query related data, it drastically simplifies debugging. An entity maps 1:1 with its database table. There are no infinite recursion bugs during JSON serialization, no complex `CascadeType` rules to memorize, and domain boundaries remain clear.
 
 ### Entity vs. DTO Encapsulation & MapStruct
 
@@ -93,19 +105,16 @@ A strict boundary is maintained between database persistence models (JPA Entitie
 
 - **Entities Stay in the Persistence Layer**: JPA Entities (`ShipmentEntity`, `CostEntity`, etc.) are mapped to Domain Models or DTOs before crossing the boundary into the application's service return signatures.
 
-- Pros:
+- **Pros**:
   - **Security**: Prevents unintended data exposure (e.g., internal sequence IDs, database flags, or audit fields).
-
   - **Decoupling**: Database schema refactors do not break external API consumers as long as the mapper preserves the API contract.
-
-  - **Session Safety**: Prevents `LazyInitializationException` and Jackson JSON recursive serialization loops during HTTP serialization outside the active transaction context.
+  - **Session Safety**: Prevents serialization crashes outside the active transaction context.
 
 ### Dynamic Querying (Specifications)
 
 Rather than writing static finder methods for every conceivable filter combination, the shipment catalog uses dynamic queries powered by Spring Data JPA Specifications.
 
-- **Mechanism**: Accepts dynamic criteria (such as `filter.search` and Pageable options) to compose SQL `WHERE` clauses on the fly.
-
+- **Mechanism**: Accepts dynamic criteria (such as `filter.search` and Spring `Pageable` options) to compose SQL `WHERE` clauses on the fly.
 - **Benefits**: Consolidates complex multi-field searches (tracking numbers, customer names) into a single unified query pipeline, keeping repository interfaces minimal and maintainable.
 
 ## 4. Frontend Architecture (Angular 17)
@@ -117,20 +126,18 @@ The frontend is implemented as a Single Page Application (SPA) using Angular 17,
 The application eliminates `NgModule` declarations entirely, utilizing Angular 17's standalone component architecture:
 
 - Every feature component explicitly declares its required dependencies (`imports: [CommonModule, MatTableModule, ...]`).
-
 - Streamlines code splitting, simplifies dependency tracking, and facilitates lazy-loading across routes.
 
 ### UI & Modal Workflows
 
-- **Modal-Driven Operations**: Financial calculations are extracted from the main page body into a dedicated Angular Material Dialog (CalculationDialogComponent).
+- **Modal-Driven Operations**: Financial calculations are extracted from the main page body into a dedicated Angular Material Dialog (`CalculationDialogComponent`).
   - **Reasoning**: Storing calculation forms inline degrades vertical readability on high-density data tables. The dialog modal keeps the main detail screen dedicated strictly to historical ledger analysis, opening user input controls only on demand.
 
-- **Component File Separation**: Complex components (such as calculation dialogs and view pages) maintain strict physical separation between logic (.ts), templates (.html), and component-scoped styling (.scss).
+- **Component File Separation**: Complex components (such as calculation dialogs and view pages) maintain strict physical separation between logic (`.ts`), templates (`.html`), and component-scoped styling (`.scss`).
 
 ### Configuration & Multi-Environment Deployments
 
 - All network targets use Angular's environment abstraction (`src/environments/environment.ts` and `environment.development.ts`).
-
 - Services inject `environment.apiUrl` dynamically rather than hardcoding host endpoints. This permits straightforward CI/CD build swaps across development, staging, and production environments.
 
 ### Route State & Browser History Management
@@ -138,8 +145,7 @@ The application eliminates `NgModule` declarations entirely, utilizing Angular 1
 Pagination and search terms are two-way synchronized with browser URL parameters (`?page=...&size=...&filter.search=...`).
 
 - **Deep Linking**: Users can share or bookmark filtered shipment queries directly.
-
-- **History Stack Preservation** (`replaceUrl: true`): When updating pagination or adjusting page sizes on detail views, navigation calls apply { `replaceUrl: true` }. This prevents every page-click or filter change from polluting the browser's history stack, ensuring that the browser "Back" button returns the user directly to the preceding view.
+- **History Stack Preservation** (`replaceUrl: true`): When updating pagination or adjusting page sizes on detail views, navigation calls apply `{ replaceUrl: true }`. This prevents every page-click or filter change from polluting the browser's history stack, ensuring that the browser "Back" button returns the user directly to the preceding view.
 
 ## 5. Local Setup & Execution
 
@@ -150,11 +156,11 @@ Pagination and search terms are two-way synchronized with browser URL parameters
 
 ### Backend (Spring Boot)
 
-Nothing is needed for the database, since we use Flyway for the migrations.
+Nothing is needed for the database, since we use Flyway for the migrations alongside an embedded H2 database.
 
 1. Start the application:
 
-   ```Bash
+   ```bash
    ./mvnw spring-boot:run
    ```
 
