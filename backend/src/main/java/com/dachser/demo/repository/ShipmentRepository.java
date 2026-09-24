@@ -69,12 +69,12 @@ public class ShipmentRepository {
                                MapSqlParameterSource parameters,
                                @NonNull GetShipmentsFilter filter) {
         if (filter.customerId() != null) {
-            sql.append(" AND s.customer_id = :customer_id");
+            sql.append(" AND s.customer_id = :customer_id ");
             parameters.addValue("customer_id", filter.customerId());
         }
 
         if (filter.customerName() != null && !filter.customerName().isEmpty()) {
-            sql.append(" AND c.name = :customer_name");
+            sql.append(" AND c.name = :customer_name ");
             parameters.addValue("customer_name", filter.customerName());
         }
 
