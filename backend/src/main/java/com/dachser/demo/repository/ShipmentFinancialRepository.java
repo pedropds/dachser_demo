@@ -23,9 +23,9 @@ public class ShipmentFinancialRepository {
                                                                            @NonNull Integer page,
                                                                            @NonNull Integer size) {
         var query = entityManager.createQuery("""
-                        SELECT s, u.username 
-                        FROM ShipmentFinancial s, UserEntity u 
-                        WHERE s.createdBy = u.id 
+                        SELECT s, u.username
+                        FROM ShipmentFinancial s, UserEntity u
+                        WHERE s.createdBy = u.id
                           AND s.shipmentId = :shipmentId
                         ORDER BY s.calculatedAt DESC
                         """,
