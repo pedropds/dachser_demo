@@ -7,6 +7,8 @@ import java.util.List;
 public record ShipmentFinancialRecord(
         Long id,
         Long shipmentId,
+        Long createdBy,
+        String createdByUsername,
         String description,
         List<Long> incomeIds,
         List<Long> costIds,

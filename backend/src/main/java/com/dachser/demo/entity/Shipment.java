@@ -1,7 +1,9 @@
 package com.dachser.demo.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigInteger;
 
@@ -11,6 +13,8 @@ import java.math.BigInteger;
 @Entity
 @Table(name = "shipments")
 @Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Shipment {
 
     @Id

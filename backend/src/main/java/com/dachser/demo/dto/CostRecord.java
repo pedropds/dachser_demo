@@ -11,6 +11,7 @@ public record CostRecord(
     String status,
     String description,
     String currency,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    Long createdBy
 ) {
 }

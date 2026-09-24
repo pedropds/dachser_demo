@@ -9,6 +9,7 @@ CREATE TABLE shipment_financials
     -- Audit Links
     income_ids     BIGINT ARRAY,
     cost_ids       BIGINT ARRAY,
+    created_by     BIGINT NOT NULL,
 
     -- Calculated Values
     income         DECIMAL(10, 2) NOT NULL,
@@ -17,5 +18,6 @@ CREATE TABLE shipment_financials
     currency       VARCHAR(5) NOT NULL,
     calculated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
-    FOREIGN KEY (shipment_id) REFERENCES shipments (id)
+    FOREIGN KEY (shipment_id) REFERENCES shipments (id),
+    FOREIGN KEY (created_by) REFERENCES users (id)
 );

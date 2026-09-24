@@ -23,19 +23,28 @@ public class ShipmentFinancialRepository {
                                                                            @NonNull Integer page,
                                                                            @NonNull Integer size) {
         var query = entityManager.createQuery("""
-                        SELECT s FROM ShipmentFinancial s WHERE s.shipmentId = :shipmentId
+                        SELECT s, u.username 
+                        FROM ShipmentFinancial s, UserEntity u 
+                        WHERE s.createdBy = u.id 
+                          AND s.shipmentId = :shipmentId
                         ORDER BY s.calculatedAt DESC
                         """,
-                ShipmentFinancial.class);
+                Object[].class);
 
         query.setParameter("shipmentId", shipmentId);
         query.setFirstResult(page * size);
         query.setMaxResults(size);
 
-        var entities = query.getResultList();
+        var results = query.getResultList();
 
-        return entities.stream()
-                .map(mapper::toRecord)
+        return results.stream()
+                .map(row -> {
+                    ShipmentFinancial entity = (ShipmentFinancial) row[0];
+                    String username = (String) row[1];
+
+                    entity.setCreatedByUsername(username);
+                    return mapper.toRecord(entity);
+                })
                 .toList();
     }
 

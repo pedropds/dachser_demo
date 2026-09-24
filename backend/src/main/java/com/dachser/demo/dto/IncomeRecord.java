@@ -10,6 +10,7 @@ public record IncomeRecord(
     String status,
     String description,
     String currency,
-    LocalDateTime createdAt
+    LocalDateTime createdAt,
+    Long createdBy
 ) {
 }

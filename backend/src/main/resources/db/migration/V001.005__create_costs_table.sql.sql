@@ -1,13 +1,16 @@
--- This table handles the customer income administration.
--- It directly stores customer payments related to a specific shipment.
-CREATE TABLE incomes
+--This table tracks all operational costs related to service provision.
+-- The cost_type allows us to distinguish between base costs and additional costs.
+CREATE TABLE costs
 (
     id          BIGINT AUTO_INCREMENT PRIMARY KEY,
     shipment_id BIGINT         NOT NULL,
+    cost_type   VARCHAR(50)    NOT NULL,
     amount      DECIMAL(10, 2) NOT NULL,
     currency    VARCHAR(5) NOT NULL,
     status      VARCHAR(20) DEFAULT 'ACTIVE', -- e.g., 'ACTIVE', 'VOIDED'
     description TEXT,
     created_at  TIMESTAMP   DEFAULT CURRENT_TIMESTAMP,
+    created_by  BIGINT NOT NULL,
+    FOREIGN KEY (created_by) REFERENCES users (id),
     FOREIGN KEY (shipment_id) REFERENCES shipments (id)
 );

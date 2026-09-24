@@ -17,13 +17,15 @@ public class ShipmentFinancialService {
     private final ShipmentFinancialRepository shipmentFinancialRepository;
     private final CostService costService;
     private final IncomeService incomeService;
+    private final SecurityContextService securityContextService;
 
     public ShipmentFinancialService(ShipmentFinancialRepository shipmentFinancialRepository,
                                     CostService costService,
-                                    IncomeService incomeService) {
+                                    IncomeService incomeService, SecurityContextService securityContextService) {
         this.shipmentFinancialRepository = shipmentFinancialRepository;
         this.costService = costService;
         this.incomeService = incomeService;
+        this.securityContextService = securityContextService;
     }
 
     public PaginatedResult<ShipmentFinancialRecord> getShipmentFinancials(Long shipmentId, Integer page, Integer size) {
@@ -41,6 +43,9 @@ public class ShipmentFinancialService {
 
     @Transactional
     public ShipmentFinancialRecord calculateAndSaveSnapshot(@NonNull CalculateFinancialsCommand command) {
+        Long userId = securityContextService.getCurrentUserId();
+        String username = securityContextService.getCurrentUsername();
+
         String currency = validateCurrencyConsistency(command);
 
         List<IncomeRecord> newIncomes = command.incomes().stream()
@@ -51,7 +56,8 @@ public class ShipmentFinancialService {
                         "ACTIVE",
                         null,
                         currency,
-                        LocalDateTime.now())
+                        LocalDateTime.now(),
+                        userId)
                 )
                 .toList();
 
@@ -64,7 +70,8 @@ public class ShipmentFinancialService {
                         "ACTIVE",
                         null,
                         currency,
-                        LocalDateTime.now())
+                        LocalDateTime.now(),
+                        userId)
                 )
                 .toList();
 
@@ -85,6 +92,8 @@ public class ShipmentFinancialService {
         ShipmentFinancialRecord financialRecord = new ShipmentFinancialRecord(
                 null,
                 command.shipmentId(),
+                userId,
+                username,
                 command.description(),
                 savedIncomeIds,
                 savedCostIds,

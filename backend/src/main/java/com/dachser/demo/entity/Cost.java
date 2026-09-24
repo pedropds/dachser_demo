@@ -38,4 +38,7 @@ public class Cost {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
 }

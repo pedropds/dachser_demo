@@ -45,4 +45,10 @@ public class ShipmentFinancial {
     @CreationTimestamp
     @Column(name = "calculated_at", nullable = false, updatable = false)
     private LocalDateTime calculatedAt;
+
+    @Column(name = "created_by", nullable = false)
+    private Long createdBy;
+
+    @Transient
+    private String createdByUsername; // Just to carry data through mappers, not persisted in DB
 }
