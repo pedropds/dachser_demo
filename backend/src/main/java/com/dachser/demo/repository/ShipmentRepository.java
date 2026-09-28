@@ -68,27 +68,27 @@ public class ShipmentRepository {
     private void appendFilters(StringBuilder sql,
                                MapSqlParameterSource parameters,
                                @NonNull GetShipmentsFilter filter) {
-        if (filter.customerId() != null) {
+        if (filter.getCustomerId() != null) {
             sql.append(" AND s.customer_id = :customer_id ");
-            parameters.addValue("customer_id", filter.customerId());
+            parameters.addValue("customer_id", filter.getCustomerId());
         }
 
-        if (filter.customerName() != null && !filter.customerName().isEmpty()) {
+        if (filter.getCustomerName() != null && !filter.getCustomerName().isEmpty()) {
             sql.append(" AND c.name = :customer_name ");
-            parameters.addValue("customer_name", filter.customerName());
+            parameters.addValue("customer_name", filter.getCustomerName());
         }
 
         // Very basic search functionality for now, just to exemplify
         // In a real-world scenario, using Postgres, we could use vector search or
         // full-text search for better performance and flexibility
-        if (filter.search() != null && !filter.search().isEmpty()) {
+        if (filter.getSearch() != null && !filter.getSearch().isEmpty()) {
             sql.append("""
                     AND (
                         s.tracking_number ILIKE :search OR
                         c.name ILIKE :search OR
                         s.customer_id::text ILIKE :search)
                     """);
-            parameters.addValue("search", "%" + filter.search() + "%");
+            parameters.addValue("search", "%" + filter.getSearch() + "%");
         }
     }
 }

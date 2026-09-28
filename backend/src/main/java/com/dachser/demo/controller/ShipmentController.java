@@ -21,7 +21,7 @@ public class ShipmentController {
     @GetMapping
     public ResponseEntity<GetShipmentsResponse> getShipments(@ModelAttribute GetShipmentsRequest request) {
         PaginatedResult<ShipmentRecord> shipments = shipmentService
-                .getShipments(request.filter(), request.page(), request.size());
+                .getShipments(request.getFilter(), request.getPage(), request.getSize());
 
         GetShipmentsResponse response = GetShipmentsResponse.builder()
                 .data(shipments.data())
